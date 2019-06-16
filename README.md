@@ -19,6 +19,7 @@ and some text, along with printing all of this out (to a dot matrix printer).
 
 The entire thing is written in 6502 Assembly language!
 
+![screenshot](images/screenshot.png)
 
 ## Notes
 
