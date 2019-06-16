@@ -1,0 +1,6 @@
+PAGE=PAGE+&100
+
+*DIR $
+
+CHAIN"Frame"
+CHAIN"Menu"
