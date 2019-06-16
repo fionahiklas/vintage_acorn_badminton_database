@@ -1,0 +1,10 @@
+   10REM Main program start routine
+   20REM copied from temporary start
+   30REM program.  Copied 5/4/91
+   40REM For badminton database
+   50REM By Fiona Bianchi
+   60*DIR $
+   70*DISPLAY
+   80*JOYSTICK
+   90*BADMINTON
+  100END
