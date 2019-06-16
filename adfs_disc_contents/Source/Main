@@ -1,0 +1,142 @@
+   10REM Main Program
+   20REM For Badminton database
+   30REM Assembles to "Badminton"
+   40REM For AS Computing project
+   50REM By Fiona Bianchi
+   60REM started 30/1/91
+   70REM split into seperate programs
+   80REM 26/3/91 due to main program 
+   90REM length about 17000 bytes
+  100MODE4:VDU23,1,0;0;0;0;0:VDU21:LOMEM=TOP+3200:HIMEM=HIMEM-4000 
+  110ONERRORVDU6,23,1,1,0;0;0;0;:CLS:PRINT'''"Start &";~Q%'"Finish &";~O%'"PC &";~P%':REPORT:PRINT;" at line ";ERL:END
+  120counter=&70
+  130joystick=&71
+  140status=&72
+  150cursor=&73
+  160xcoord=&74
+  170ycoord=&75
+  180xgraph=&76
+  190ygraph=&78
+  200xvalue=&7A
+  210yvalue=&7B
+  220first_icon=&7C
+  230character=&7D
+  240ind1=&7E
+  250ind2=&7F
+  260ind3=&80
+  270ind4=&81
+  280ind5=&82
+  290ind6=&83
+  300addr=&84
+  310byte=&86
+  320line=&87
+  330current_frame=&88
+  340current_line=&89
+  350work1=&8A
+  360work2=&8B
+  370work3=&8C
+  380work4=&8D
+  390work5=&8E
+  400work6=&8F
+  410work7=&90
+  420work8=&91
+  430work9=&92
+  440work10=&93
+  450work11=&94
+  460work12=&95
+  470work13=&96
+  480work14=&97
+  490work15=&98
+  500work16=&99
+  510work17=&9A
+  520work18=&9B
+  530work19=&9C
+  540work20=&9D
+  550work21=&9E
+  560work22=&9F
+  570category=&50
+  580index=&51
+  590data=&52
+  600free=&53
+  610type=&54
+  620ncat=&55
+  630ccat=&56
+  640offset=&58
+  650file=&59
+  660present=&5A
+  670REM next address free is &5E
+  680oswrch=&FFEE:osbyte=&FFF4:osrdch=&FFE0:osfind=&FFCE:osargs=&FFDA:osbput=&FFD4:osbget=&FFD7:osgbpb=&FFD1:osfile=&FFDD:oscli=&FFF7:Q%=HIMEM
+  690FORI%=4TO6STEP2:P%=&2000:O%=Q%
+  700[OPTI%
+  710 
+  720\*************
+  730\*Subroutines*
+  740\*************
+  750 
+  760\**** Cursor plotting routine ****
+  770.plot LDA cursor:BEQ which:JSR draw:LDA#0:STA cursor:RTS
+  780.which LDA status:AND#24:BEQ notselect:LDA#165:STA cursor:JMP draw:.notselect LDA ycoord:CMP#28:BCC noticon:LDA#162:STA cursor:JMP draw:.noticon CMP#21:BCC nottext:LDA#163:STA cursor:JMP draw:.nottext LDA#164:STA cursor:JMP draw
+  790.draw LDA xcoord:STA xvalue:LDA ycoord:STA yvalue:JSR graphics:JSR vdu25:LDA cursor:JMP oswrch
+  800 
+  810\**** graphics coord calc ****
+  820.graphics LDA#0:STA xgraph:STA xgraph+1:STA ygraph:STA ygraph+1:LDX#5:LDA xvalue:.rotateX ASL A:ROL xgraph+1:DEX:BNE rotateX:STA xgraph:LDA#31:SEC:SBC yvalue:LDX#5:.rotateY ASL A:ROL ygraph+1:DEX:BNE rotateY:CLC:ADC#28:STA ygraph
+  830LDA ygraph+1:ADC#0:STA ygraph+1:RTS
+  840 
+  850\**** Text print routine ****
+  860.print PLA:STA ind1:PLA:STA ind2:LDY#1:.printloop LDA (ind1),Y:CMP#255:BEQ finprint:JSR oswrch:INY:JMP printloop:.finprint TYA:CLC:ADC ind1:STA ind1:LDA ind2:ADC#0:PHA:LDA ind1:PHA:RTS
+  870 
+  880\**** Window routines ****
+  890.remove
+  900PHA:TYA:PHA:TXA:PHA:JSR setup
+  910.loop LDA(ind1),Y:STA(ind3),Y:LDA#0:STA(ind1),Y:INY:CPY byte:BNE loop:LDY#0:INX:CPX line:BEQ end:CLC:LDA#&40:ADC ind1:STA ind1:LDA ind2:ADC#1:STA ind2:CLC:LDA byte:ADC ind3:STA ind3:LDA ind4:ADC#0:STA ind4:JMP loop
+  920.replace
+  930PHA:TYA:PHA:TXA:PHA:JSR setup 
+  940.rloop LDA(ind3),Y:STA(ind1),Y:INY:CPY byte:BNE rloop:LDY#0:INX:CPX line:BEQ tend:CLC:LDA#&40:ADC ind1:STA ind1:LDA ind2:ADC#1:STA ind2:CLC:LDAbyte:ADC ind3:STA ind3:LDA ind4:ADC#0:STA ind4:JMP rloop:.tend LDA#0:STA line:JMP end
+  950.setup LDX#0:LDY#0:LDA addr:STA ind1:LDA addr+1:STA ind2:LDA#dump MOD 256:STA ind3:LDA#dump DIV 256:STA ind4:RTS
+  960.end PLA:TAX:PLA:TAY:PLA:RTS
+  970 
+  980\**** icon highlight ****
+  990.highlight LDA first_icon:STA ind1:LDA#3:STA ind2:JSR multiply:LDA ind3:STA xvalue:LDA#29:STA yvalue:JSR graphics:JSR vdu25:LDA#172:JSR oswrch:INC xvalue:JSR graphics:JSR vdu25:LDA#172:JSR oswrch:INC yvalue:JSR graphics
+ 1000JSR vdu25:LDA#172:JSR oswrch:DEC xvalue:JSR graphics:JSR vdu25:LDA#172:JMP oswrch
+ 1010 
+ 1020\**** multiply routine ****
+ 1030.multiply LDX#0:LDA#0:STA ind3:STA ind4:STA ind6:LDA ind1:STA ind5:.multiloop ROR ind2:BCC noadd:LDA ind3:CLC:ADC ind5:STA ind3:LDA ind4:ADC ind6:STA ind4:.noadd CLC:ROL ind5:ROL ind6:INX:CPX#8:BNE multiloop:RTS
+ 1040 
+ 1050\**** division routine ****
+ 1060.division LDA#0:STA ind6:LDA ind2:BPL not_num:EOR#255:STA ind2:CLC:LDA ind1:EOR#255:ADC#1:STA ind1:LDA ind2:ADC#0:STA ind2:LDA#255:STA ind6:.not_num LDA ind3:BPL not_den:CLC:EOR#255:ADC#1:STA ind3:LDA ind6:EOR#255:STA ind6:.not_den
+ 1070LDA#0:STA ind4:LDX#8:.divloop ASL ind1:ROL ind2:LDA ind2:BCC no_carry:SBC ind3:STA ind2:SEC:JMP shift:.no_carry SEC:SBC ind3:BCC shift:STA ind2:.shift ROL ind4:DEX:BNE divloop:LDA ind6:BPL noneg:EOR ind4:CLC:ADC#1:STA ind4:.noneg RTS
+ 1080 
+ 1090\**** graphics PLOT routine ****
+ 1100.vdu25 LDA#25:JSR oswrch:LDA#4:JSR oswrch:LDA xgraph:JSR oswrch:LDA xgraph+1:JSR oswrch:LDA ygraph:JSR oswrch:LDA ygraph+1:JMP oswrch
+ 1110 
+ 1120\**** text cursor move ****
+ 1130.vdu31 LDA#31:JSR oswrch:TXA:JSR oswrch:TYA:JMP oswrch
+ 1140 
+ 1150]
+ 1160RESTORE 1410:REPEAT:READ A$:IF A$<>""THENOSCLI"LOAD >"+A$+" "+STR$~(TOP-2):PROCassemble
+ 1170UNTILA$=""
+ 1180[OPTI%
+ 1190\*****************
+ 1200\*memory for data*
+ 1210\*****************
+ 1220 
+ 1230.dump
+ 1240]
+ 1250FORC%=0TO3000:?O%=0:O%=O%+1:P%=P%+1:NEXT
+ 1260[OPTI%
+ 1270.text_data
+ 1280]
+ 1290FORC%=0TO759:?O%=0:O%=O%+1:P%=P%+1:NEXT
+ 1300[OPTI%
+ 1310.text_end EQUB 255
+ 1320.max_frame EQUB 0
+ 1330.players EQUS STRING$(100,CHR$(0))
+ 1340.catadds EQUS STRING$(20,CHR$(0))
+ 1350.catlist EQUS STRING$(20,CHR$(0))
+ 1360EQUS"This is the end of the program":EQUS STRING$(20,CHR$(255))
+ 1370EQUS"This program was written by Fiona Bianchi for the AS computing project involving 75% of own-written code.  This main program was completed on Friday 5th April 1991 with no apparent errors."
+ 1380EQUS"Badminton Database program Version 1.  Specifically for Acorn Electron disc system."
+ 1390]
+ 1400NEXT:OSCLI"SAVE :0.Program.Badminton "+STR$~Q%+" "+STR$~O%+" "+STR$~start:OSCLI"Attrib":VDU6,23,1,1,0;0;0;0;:PRINT''"&";~Q%,Q%'"&";~O%,O%'"&";~(O%-Q%),(O%-Q%):T%=fileblock
+ 1410DATA sub1,sub2,loop,icon,court,text,quit,setup,pselect,print1,print2,print3,filewin,lssetup,fselect,file1,file2,file3,file4,backup,delete1,delete2,misc,
+ 1420END

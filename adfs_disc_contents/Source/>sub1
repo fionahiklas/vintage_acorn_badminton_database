@@ -1,0 +1,21 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** display one text line ****
+ 4030.text_line STA ind1:TYA:PHA:LDA#38:STA ind2:JSR multiply:LDA#text_data MOD 256:CLC:ADC ind3:STA ind3:LDA#text_data DIV 256:ADC ind4:STA ind4:PLA:TAY:LDA#4:JSR oswrch:LDX#1:JSR vdu31:LDY#0:.text_loop LDA(ind3),Y:BNE not_empty:LDA#32
+ 4040.not_empty JSR oswrch:INY:CPY#38:BNE text_loop:LDA#5:JMP oswrch
+ 4050 
+ 4060\**** move one text line ****
+ 4070.move_line LDX#38:.line_loop LDY#0:.char_loop LDA(ind1),Y:STA(ind3),Y:INY:CPY#8:BNE char_loop:CLC:LDA ind1:ADC#8:STA ind1:LDA ind2:ADC#0:STA ind2:CLC:LDA ind3:ADC#8:STA ind3:LDA ind4:ADC#0:STA ind4:DEX:BNE line_loop:RTS
+ 4080 
+ 4090\**** move text up ****
+ 4100.text_up LDX#6:LDA#&88:STA ind1:LDA#&73:STA ind2:LDA#&48:STA ind3:LDA#&72:STA ind4:.mull TXA:PHA:JSR move_line:CLC:LDA ind1:ADC#16:STA ind1:LDA ind2:ADC#0:STA ind2:CLC:LDA ind3:ADC#16:STA ind3:LDA ind4:ADC#0:STA ind4:PLA:TAX:DEX:BNE mull
+ 4110LDA current_line:CLC:ADC#6:LDY#27:JSR text_line:JMP line_no
+ 4120 
+ 4130\**** move text down ****
+ 4140.text_down LDX#6:LDA#&88:STA ind1:LDA#&78:STA ind2:LDA#&C8:STA ind3:LDA#&79:STA ind4:.mdll TXA:PHA:JSR move_line:SEC:LDA ind1:SBC#&70:STA ind1:LDA ind2:SBC#2:STA ind2:SEC:LDA ind3:SBC#&70:STA ind3:LDA ind4:SBC#2:STA ind4:PLA:TAX:DEX
+ 4150BNE mdll:LDA current_line:LDY#21:JSR text_line:JMP line_no
+ 4160 
+ 4170\**** text memory address ****
+ 4180.text_addr LDA ycoord:SEC:SBC#21:CLC:ADC current_line:STA ind1:LDA#38:STA ind2:JSR multiply:LDA xcoord:SEC:SBC#1:CLC:ADC ind3:STA ind3:LDA ind4:ADC#0:STA ind4:CLC:LDA#text_data MOD 256:ADC ind3:STA ind1:LDA#text_data DIV 256:ADC ind4
+ 4190STA ind2:RTS
+ 4200]:ENDPROC

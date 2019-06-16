@@ -1,0 +1,12 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** delete file routine ****
+ 4030.delete LDA status:AND#32:BNE delc:RTS:.delc LDA status:AND#224:ORA#5:STA status:JSR plot:JSR print:EQUB4:EQUB31:EQUB33:EQUB29:EQUS"Delete ":EQUB5:EQUB255:LDA#&D8:STA addr:LDA#&64:STA addr+1:LDA#160:STA byte:LDA#10:STA line:JSR remove
+ 4040JSR print:EQUB4:EQUB31:EQUB11:EQUB10:EQUS"\246\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\250":EQUB31:EQUB11:EQUB11:EQUS"\251The current file  \251":EQUB31:EQUB11:EQUB12:EQUS"\251will be deleted   \251":EQUB31:EQUB11:EQUB13:EQUS"\251from memory AND   \251":EQUB31:EQUB11:EQUB14
+ 4050EQUS"\251from disc if it   \251":EQUB31:EQUB11:EQUB15:EQUS"\251was originaly":EQUB31:EQUB30:EQUB15:EQUS"\251":EQUB31:EQUB11:EQUB16:EQUS"\251loaded from disc. \251":EQUB31:EQUB11:EQUB17:EQUS"\251":EQUB31:EQUB30:EQUB17:EQUS"\251":EQUB31:EQUB11:EQUB18
+ 4060EQUS"\251Okay (Y/N) ?":EQUB31:EQUB30:EQUB18:EQUS"\251":EQUB31:EQUB11:EQUB19:EQUS"\252\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\253":EQUB5:EQUB255:JSR osrdch:BCC welldel:LDA#&7C:JSR osbyte:.welldel CMP#89:BEQ acdel:JSR plot:JMP undo
+ 4070.acdel JSR replace:JSR cleartext:JSR show_players:JSR resetmem:JSR plot:LDA status:AND#128:BNE discdel:LDA status:AND#7:STA status:JMP undo
+ 4080.discdel LDA#0:STA work1:STA work1:STA work3:STA work4:LDX#work1:LDY free:LDA#1:JSR osargs:JSR osbget:STA work5:JSR osbget:STA work6:JSR osbget:STA work7:LDA work5:CMP#20:BNE dspcok:LDA#53:STA work1:JMP discprob 
+ 4090.dspcok LDX#work1:LDA#1:JSR osargs:LDX work5:INX:TXA:JSR osbput:SEC:LDA work6:SBC#1:PHP:JSR osbput:PLP:LDA work7:SBC#0:JSR osbput:JSR dshifts:LDX#work1:LDA#1:JSR osargs:LDX#0:.wnfsl LDA present,X:JSR osbput:INX:CPX#3:BNE wnfsl
+ 4100LDY index:JSR dfinent:JSR dshifti:LDY category:JSR dcatmod:LDY#0:LDA#255:JSR osargs:JSR setcat:LDA status:AND#7:STA status:JMP undo
+ 4110]:ENDPROC

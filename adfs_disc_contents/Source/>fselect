@@ -1,0 +1,14 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** select file info ****
+ 4030.file_select LDA ycoord:CMP#10:BNE f1:LDA xcoord:CMP#15:BCC nifsw:CMP#21:BCS nifsw:LDY offset:BEQ nifsw:DEY:STY offset:JSR clearwin:LDA type:AND#1:BNE notsub:JSR okicon:.notsub CLC:LDA offset:ROL A:TAY:LDA catadds,Y:STA ccat:INY
+ 4040LDA catadds,Y:STA ccat+1:JSR setcat:JSR pcname:JSR listcat:RTS
+ 4050.f1 CMP#23:BCC f2:CMP#26:BCS nifsw:LDA xcoord:CMP#15:BCC nifsw:CMP#24:BCS f1a:LDA#0:LDY#0:JSR osfind:LDA#0:STA type:LDA status:AND#63:STA status:JMP undo
+ 4060.f1a CMP#26:BCC nifsw:CMP#31:BCS nifsw:LDA type:AND#2:BEQ nifsw:LDA status:AND#7:CMP#3:BEQ fload:JMP savedata:.fload JMP loaddata
+ 4070.nifsw RTS
+ 4080.f2 LDX type:CPX#2:BEQ f2a:CMP#12:BCC nifsw:CMP#22:BCS nifsw:LDA xcoord:CMP#15:BCC nifsw:CMP#27:BCS nifsw:JMP newcat
+ 4090.f2a LDA status:AND#7:CMP#2:BEQ nifsw:LDA xcoord:CMP#25:BCC nifsw:CMP#28:BCS nifsw:LDA ycoord:CMP#13:BCC nifsw:CMP#16:BCS f2b:LDY file:CPY ncat:BEQ nifsw:INY:STY file:JMP nfiles
+ 4100.f2b CMP#17:BCC nifsw:CMP#19:BCS nifsw:LDY file:BEQ nifsw:DEY:STY file:JMP nfiles
+ 4110.newcat SEC:LDA ycoord:SBC#12:CMP ncat:BCC chcat:RTS:.chcat CLC:ROL A:TAY:LDX offset:INX:STX offset:TXA:CLC:ROL A:TAX:LDA catlist,Y:STA ccat:STA catadds,X:INY:INX:LDA catlist,Y:STA ccat+1:STA catadds,X:JSR setcat:JSR clearwin
+ 4120JSR pcname:LDA type:AND#1:BEQ suscd:JMP listcat:.suscd LDA status:AND#7:CMP#3:BNE svwin:JMP loadwin:.svwin JMP savewin
+ 4130]:ENDPROC

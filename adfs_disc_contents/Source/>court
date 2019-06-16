@@ -1,0 +1,18 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** Editing for court area ****
+ 4030.court_edit LDA ycoord:BEQ tfin:LDA xcoord:BEQ tfin:JSR plot:LDA character:CMP#127:BNE play:LDY#0:.comploop LDAplayers,Y:CMP xcoord:BNE not_there:INY:LDAplayers,Y:CMP ycoord:BEQ found:INY:CPY#10:BNE comploop:JMP end_court:.tfin RTS
+ 4040.not_there INY:INY:CPY#10:BNE comploop:JMP end_court:.found TYA:CLC:ROR A:STA ind1:JSR show_player:LDA#0:STA xvalue:STA yvalue:JSR store_all:JMP end_court
+ 4050.play CMP#49:BCC increment:CMP#54:BCS increment:JSR status_check:SEC:SBC#49:STA ind1:CLC:ROL A:TAY:LDA players,Y:BNE exists:LDA ind1:PHA:LDA xcoord:STA xvalue:LDA ycoord:STA yvalue:JSR store_all:PLA:STA ind1:JSR show_player
+ 4060JMP end_court:.exists JSR show_player:LDA ind1:PHA:LDA current_frame:STA ind1:LDA#10:STA ind2:JSR multiply:CLC:LDA#players MOD 256:ADC ind3:STA ind3:LDA#players DIV 256:ADC ind4:STA ind4:PLA:STA ind1:CLC:ROL A:TAY:LDA xcoord
+ 4070STA players,Y:STA(ind3),Y:INY:LDA ycoord:STA players,Y:STA(ind3),Y:JSR show_player:JMP end_court
+ 4080.increment CMP#54:BNE decrement:LDY current_frame:INY:CPY max_frame:BCS inc_max:STY current_frame:JSR show_players:LDA current_frame:STA ind1:LDA#10:STA ind2:JSR multiply:LDA ind3:STA ind5:LDA#0:STA ind6:JSR transfer:JSR show_players
+ 4090JMP icdcend:.inc_max CPY#10:BCS end_court:STY current_frame:INC max_frame:STY ind1:LDA#10:STA ind2:JSR multiply:LDA ind3:STA ind6:LDA#0:STA ind5:JSR transfer:JMP icdcend
+ 4100.decrement CMP#55:BNE max_set:LDY current_frame:DEY:BNE dec_ok:LDY max_frame:DEY:.dec_ok STY current_frame:JSR show_players:LDA current_frame:STA ind1:LDA#10:STA ind2:JSR multiply:LDA ind3:STA ind5:LDA#0:STA ind6:JSR transfer
+ 4110JSR show_players:JMP icdcend
+ 4120.max_set CMP#56:BNE end_court:LDY current_frame:INY:STY max_frame:JMP end_court
+ 4130.icdcend JSR frame_no
+ 4140.end_court JMP plot
+ 4150.store_all LDA#players MOD 256:STA ind2:LDA#players DIV 256:STA ind3:LDX max_frame:.msl LDA ind1:CLC:ROL A:TAY:LDA xvalue:STA(ind2),Y:INY:LDA yvalue:STA(ind2),Y:CLC:LDA ind2:ADC#10:STA ind2:LDA ind3:ADC#0:STA ind3:DEX:BNE msl:RTS
+ 4160.transfer CLC:LDA#players MOD 256:ADC ind5:STA ind1:LDA#players DIV 256:ADC#0:STA ind2:CLC:LDA#players MOD 256:ADC ind6:STA ind3:LDA#players DIV 256:ADC#0:STA ind4:LDY#0:.trl LDA(ind1),Y:STA(ind3),Y:INY:CPY#10:BNE trl:RTS
+ 4170]:ENDPROC

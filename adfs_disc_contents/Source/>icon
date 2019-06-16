@@ -1,0 +1,18 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** icon decode procedure ****
+ 4030.icon_decode LDA xcoord:CMP#33:BCS outside:CMP#3:BCS i1
+ 4040.outside RTS
+ 4050.i1 CMP#30:BCC i2:LDA status:AND#7:CMP#2:BCS outside:LDY current_frame:INY:CPY max_frame:BCC ifo:LDY#1:.ifo STY current_frame:JMP animate
+ 4060.i2 CMP#27:BCC i3:LDA status:AND#7:CMP#2:BCS outside:LDY current_frame:DEY:BNE dfo:LDY max_frame:DEY:. dfo STY current_frame:JMP animate
+ 4070.i3 CMP#24:BCC i4:LDA status:AND#7:CMP#2:BCS outside:LDX current_line:CPX#13:BEQ outside:INX:STX current_line:JMP text_up
+ 4080.i4 CMP#21:BCC i5:LDA status:AND#7:CMP#2:BCS outside:LDX current_line:BEQ outside:DEX:STX current_line:JMP text_down
+ 4090.i5 CMP#18:BCC i6:LDA status:AND#7:BEQ quit:JMP undo:.quit JMP question
+ 4100.i6 CMP#15:BCC i7:LDA first_icon:BNE bin:LDA#5:STA first_icon:JMP highlight:.bin CMP#2:BNE error:JSR i11:JMP delete
+ 4110.i7 CMP#12:BCC i8:LDA first_icon:BNE error:LDA#4:STA first_icon:JMP highlight
+ 4120.i8 CMP#9:BCC i9:LDA first_icon:BNE printer:LDA#3:STA first_icon:JMP highlight:.printer CMP#2:BNE error:JSR i11:JMP print_setup
+ 4130.i9 CMP#6:BCC i10:LDA first_icon:BNE paper:LDA#2:STA first_icon:JMP highlight:.paper CMP#4:BNE not2:JSR i11:JMP edit_setup:.not2 CMP#1:BNE error:JSR i11:JMP load_setup
+ 4140.i10 CMP#3:BCC i11:LDA first_icon:BNE cabinet:LDA#1:STA first_icon:JMP highlight:.cabinet CMP#2:BNE not4:JSR i11:JMP save_setup:.not4 CMP#1:BNE error:JSR i11:JMP backup 
+ 4150.i11 JSR highlight:LDA#0:STA first_icon:RTS
+ 4160.error JSR i11:LDA#7:JMP oswrch
+ 4170]:ENDPROC

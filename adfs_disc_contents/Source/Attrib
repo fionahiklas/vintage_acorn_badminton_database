@@ -1,0 +1,20 @@
+   10REM Attribute change for
+   20REM badminton file to allow
+   30REM it to run using the start
+   40REM program
+   50REM By Fiona Binachi
+   60REM 16/2/91
+   70osfile=&FFDD
+   80FORI%=0TO2STEP2:P%=&900
+   90[OPTI%
+  100.name EQUS"$.Program.Badminton":EQUB 13
+  110.block
+  120EQUB name MOD 256
+  130EQUB name DIV 256
+  140.load EQUW 0
+  150EQUW 0
+  160EQUW 0
+  170EQUW 0
+  180.start LDA#5:LDX#block MOD 256:LDY#block DIV 256:JSR osfile:LDA#0:STA load:LDA#&20:STA load+1:LDA#1:LDX#block MOD 256:LDY#block DIV 256:JSR osfile:RTS
+  190]:NEXT
+  200OSCLI"SAVE $.Library.Attrib 900 "+STR$~P%+" "+STR$~start

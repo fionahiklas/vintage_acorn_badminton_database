@@ -1,0 +1,10 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** display all frames ****
+ 4030.allpos LDA#1:STA current_frame:JSR frame_no:JSR firsthigh:LDA#0:STA ind6:LDA#10:STA ind5:JSR transfer:JSR show_players:.playloop LDY current_frame:INY:CPY max_frame:BCS endall:STY current_frame:JSR frame_no:JSR join:LDA current_frame
+ 4040STA ind1:LDA#10:STA ind2:JSR multiply:LDA ind3:STA ind5:LDA#0:STA ind6:JSR transfer:JMP playloop:.endall RTS
+ 4050.join LDA current_frame:STA ind1:LDA#10:STA ind2:JSR multiply:CLC:LDA#players MOD 256:STA work8:ADC ind3:STA work10:LDA#players DIV 256:STA work9:ADC#0:STA work11:LDY#0:.joinloop LDA#0:STA work12:LDA(work10),Y:CMP(work8),Y:BNE okxdraw
+ 4060INC work12:.okxdraw STA xvalue:INY:LDA(work10),Y:CMP(work8),Y:BNE okydraw:INC work12:.okydraw STA yvalue:LDA work12:CMP#2:BNE okdraw:INY:CPY#10:BNE joinloop:RTS:.okdraw JSR graphics:JSR vdu25:TYA:CLC:ROR A:CLC:ADC#49:JSR oswrch:JSR vdu25
+ 4070DEY:LDA(work8),Y:STA xvalue:INY:LDA(work8),Y:STA yvalue:JSR graphics:LDA#25:JSR oswrch:LDA#5:JSR oswrch:LDA xgraph:JSR oswrch:LDA xgraph+1:JSR oswrch:LDA ygraph:JSR oswrch:LDA ygraph+1:JSR oswrch:INY:CPY#10:BNE joinloop:RTS
+ 4080.firsthigh LDY#10:.fthl LDA players,Y:BNE highok:INY:INY:CPY#20:BNE fthl:JMP highfin:.highok STA xvalue:INY:LDA players,Y:STA yvalue:JSR graphics:JSR vdu25:LDA#172:JSR oswrch:INY:CPY#20:BNE fthl:.highfin RTS
+ 4090]:ENDPROC 

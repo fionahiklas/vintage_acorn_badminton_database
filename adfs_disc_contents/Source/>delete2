@@ -1,0 +1,26 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** delete file reorg. ****
+ 4030 
+ 4040\**** shift free spaces up ****
+ 4050.dshifts LDA work5:STA ind1:STA work8:LDA#3:STA ind2:JSR multiply:LDA ind3:STA work1:.dspcl LDX#work1:LDA#1:JSR osargs:LDX#0:.dsspc JSR osbget:STA work9,X:INX:CPX#3:BNE dsspc:LDX#0:.dtspc LDA work9,X:JSR osbput:INX:CPX#3:BNE dtspc
+ 4060DEC work8:BEQ dssend:SEC:LDA work1:SBC#3:STA work1:JMP dspcl:.dssend RTS
+ 4070.dfinent LDA#0:STA work1:STA work2:.entfl LDX#work1:LDA#1:JSR osargs:LDX#0:.entil JSR osbget:STA work8,X:INX:CPX#3:BNE entil:LDX#2:.cpel LDA work8,X:CMP present,X:BNE notent:CPX#0:BEQ entfound:DEX:JMP cpel:.notent CLC:LDA work1:ADC#5
+ 4080STA work1:LDA work2:ADC#0:STA work2:JMP entfl:.entfound LDA work1:STA work11:LDA work2:STA work12:RTS
+ 4090 
+ 4100\**** shift index down ****
+ 4110.dshifti LDA work6:STA ind1:LDA#5:STA ind2:JSR multiply:LDA ind3:STA work17:LDA ind4:STA work18:LDA work7:STA ind1:LDA#5:STA ind2:JSR multiply:CLC:LDA ind3:ADC work18:STA work18:CLC:LDA work1:ADC#5:STA work13:LDA work2:ADC#0:STA work14
+ 4120LDA#0:STA work15:STA work16:.dsil LDX#work13:LDA#1:JSR osargs:LDX#0:.dsiil JSR osbget:STA work8,X:INX:CPX#3:BNE dsiil:LDX#work1:LDA#1:JSR osargs:LDX#0:.dsiol LDA work8,X:JSR osbput:INX:CPX#3:BNE dsiol:CLC:LDA work1:ADC#5:STA work1
+ 4130LDA work2:ADC#0:STA work2:CLC:LDA work13:ADC#5:STA work13:LDA work14:ADC#0:STA work14:LDA work14:CMP work18:BNE dsil:LDA work13:CMP work17:BNE dsil:RTS
+ 4140 
+ 4150\**** modify catagories ****
+ 4160.dcatmod LDA#0:STA work1:STA work2:.dscloop LDX#work1:LDA#1:JSR osargs:JSR osbget:CMP#2:BEQ daltoff:CMP#255:BEQ deofchk:CLC:LDA work1:ADC#13:STA work1:LDA work2:ADC#0:STA work2:JMP dscloop
+ 4170.deofchk JSR osbget:BCS dscend:CLC:LDA work1:ADC#1:STA work1:LDA work2:ADC#0:STA work2:JMP dscloop
+ 4180.dscend RTS
+ 4190.daltoff CLC:LDA work1:ADC#14:STA work1:LDA work2:ADC#0:STA work2:LDX#work1:LDA#1:JSR osargs:JSR osbget:STA work8:JSR osbget:STA work9:JSR addcomp:BCC needalt:CLC:LDA work1:ADC#2:STA work1:ADC#0:STA work2:JMP dscloop
+ 4200.needalt SEC:LDA work1:SBC#2:STA work1:LDA work2:SBC#0:STA work2:LDX#work1:LDA#1:JSR osargs:LDA work8:STA work13:LDA work9:STA work14:JSR osbget:STA work8:JSR osbget:STA work9:JSR addcomp:BCS thiscat:LDX#work1:LDA#1:JSR osargs
+ 4210SEC:LDA work8:SBC#5:PHP:JSR osbput:PLP:LDA work9:SBC#0:JSR osbput:SEC:LDA work13:SBC#5:PHP:JSR osbput:PLP:LDA work14:SBC#0:JSR osbput:CLC:LDA work1:ADC#4:STA work1:LDA work2:ADC#0:STA work2:JMP dscloop
+ 4220.thiscat SEC:LDA work1:SBC#1:STA work1:LDA work2:SBC#0:STA work2:LDX#work1:LDA#1:JSR osargs:JSR osbget:STA work15:LDX#work1:LDA#1:JSR osargs:LDX work15:DEX:TXA:JSR osbput:CLC:LDA work1:ADC#3:STA work1:LDA work2:ADC#0:STA work2:LDX#work1
+ 4230LDA#1:JSR osargs:SEC:LDA work13:SBC#5:PHP:JSR osbput:PLP:LDA work14:SBC#0:JSR osbput:CLC:LDA work1:ADC#2:STA work1:LDA work2:ADC#0:STA work2:JMP dscloop
+ 4240.addcomp SEC:LDA work11:SBC work8:STA work15:LDA work12:SBC#0:STA work16:RTS
+ 4250]:ENDPROC

@@ -1,0 +1,12 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** disc reorganise routine ****
+ 4030.reorg LDA#1:STA work1:LDA#0:STA work2:STA work3:STA work4:LDX#work1:LDY free:LDA#1:JSR osargs:JSR osbget:STA work10:JSR osbget:STA work11:CMP#371 DIV 256:BCC dnf:LDA work10:CMP#371 MOD 256:BNE dnf:LDA#3:STA work1:PLA:PLA:JMP discprob
+ 4040.dnf LDX#0:.fsal JSR osbget:STA present,X:INX:CPX#3:BNE fsal:LDA#0:STA work1:LDX#work1:LDA#1:JSR osargs:JSR osbget:STA work12:CMP#2:BCC onlyspc:JSR shiftspc:JMP increc:.onlyspc LDA#3:STA work1:LDX#work1:LDA#1:JSR osargs:LDX#0:CLC
+ 4050LDA present,X:ADC#861 MOD 256:PHP:JSR osbput:INX:PLP:LDA present,X:ADC#861 DIV 256:PHP:JSR osbput:INX:PLP:LDA present,X:ADC#0:JSR osbput
+ 4060.increc LDA#1:STA work1:LDX#work1:LDA#1:JSR osargs:CLC:LDA work10:ADC#1:STA work10:PHP:JSR osbput:PLP:LDA work11:ADC#0:STA work11:JSR osbput
+ 4070LDY category:CLC:LDA ccat:ADC#11:STA work1:LDA ccat+1:ADC#0:STA work2:LDX#work1:LDA#1:JSR osargs:LDA ncat:CMP#255:BNE catupdat:LDA#4:STA work1:PLA:PLA:JMP discprob
+ 4080.catupdat TAX:INX:TXA:STA ncat:JSR osbput:CLC:LDA work1:ADC#3:STA work1:LDA work2:ADC#0:STA work2:LDX#work1:LDA#1:JSR osargs:JSR osbget:STA work5:JSR osbget:STA work6:CLC:LDA work5:ADC#5:STA work7:LDA work6:ADC#0
+ 4090STA work8:LDA#1:JSR osargs:LDA work7:JSR osbput:LDA work8:JSR osbput:LDY index:JSR shiftind:LDA work5:STA work1:LDA work6:STA work2:LDX#work1:LDA#1:JSR osargs:LDX#0:.entloop LDA present,X:JSR osbput:INX:CPX#3:BNE entloop:LDY category
+ 4100JSR shiftcat:RTS
+ 4110]:ENDPROC

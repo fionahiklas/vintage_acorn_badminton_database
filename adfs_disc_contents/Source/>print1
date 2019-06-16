@@ -1,0 +1,13 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** printer dump routines ****
+ 4030.pdump LDA work4:BNE ntpo:JMP endp:.ntpo JSR show_players:LDA#0:STA work6:LDA work5:AND#2:BEQ allp:LDA#4:STA work7:.seploop LDA#1:STA current_frame:.fpdl JSR frame_no:LDA current_frame:STA ind1:LDA#10:STA ind2:JSR multiply:LDA ind3
+ 4040STA ind5:LDA#0:STA ind6:JSR transfer:JSR show_players:JSR courtd:JSR show_players:JSR pagecheck:LDY current_frame:INY:CPY max_frame:BEQ nomoref:STY current_frame:JMP fpdl:.nomoref JSR normline:JSR spaces:JSR textd:JSR spaces
+ 4050JSR pagecheck:LDY work6:INY:STY work6:CPY work4:BEQ sepend:JMP seploop:.sepend LDA work7:CMP#4:BEQ endp:JSR print:EQUB2:EQUB1:EQUB12:EQUB3:EQUB255:JMP endp
+ 4060.allp LDA#4:STA work7:.allloop JSR allpos:JSR courtd:JSR allpos:JSR normline:JSR spaces:JSR pagecheck:JSR textd:JSR spaces:JSR pagecheck:LDY work6:INY:STY work6:CPY work4:BEQ allend:JMP allloop:.allend LDA work7:CMP#4:BEQ endp
+ 4070JSR print:EQUB2:EQUB1:EQUB12:EQUB3:EQUB255
+ 4080.endp LDA#1:STA current_frame:LDA#10:STA ind5:LDA#0:STA ind6:JSR transfer:JSR show_players:JSR frame_no:LDA status:AND#224:STA status:JSR print:EQUB4:EQUB31:EQUB33:EQUB29:EQUS"Waiting":EQUB5:EQUB255:JSR plot:RTS
+ 4090.pagecheck LDY work7:DEY:BNE no_pe:LDA#2:JSR oswrch:LDA#12:JSR apc:LDA#3:JSR oswrch:LDY#4:.no_pe STY work7:RTS
+ 4100.normline LDA#2:JSR oswrch:LDA#27:JSR apc:LDA#50:JSR apc:LDA#3:JMP oswrch
+ 4110.spaces LDA#2:JSR oswrch:LDA#13:JSR apc:JSR apc:LDA#3:JMP oswrch 
+ 4120]:ENDPROC

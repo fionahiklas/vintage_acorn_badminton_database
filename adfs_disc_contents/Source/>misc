@@ -1,0 +1,5 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** misc routines (temp) ****
+ 4030.undo JSR plot:LDA status:AND#224:STA status:JSR print:EQUB4:EQUB31:EQUB33:EQUB29:EQUS"Waiting":EQUB5:EQUB255:LDA line:BEQ okundo:JSR replace:.okundo JMP plot
+ 4040]:ENDPROC 

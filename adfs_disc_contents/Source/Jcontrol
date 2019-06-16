@@ -1,0 +1,27 @@
+   10REM Joystick control program
+   20REM Adapted from interupt timing
+   30REM program (clock2)
+   40REM By Fiona Bianchi
+   50REM 2/2/91
+   60counter=&70:joystick=&71
+   70FORI%=0TO2STEP2:P%=&900
+   80[OPTI%
+   90.start
+  100SEI
+  110LDA &204:STA return+1
+  120LDA &205:STA return+2
+  130LDA#code MOD 256:STA &204
+  140LDA#code DIV 256:STA &205
+  150LDA#0:STA joystick:LDA#20:STA counter:CLI:RTS
+  160.code PHA:LDA&FE00:AND#1:BNE clock:PLA
+  170.return JMP &FFFF
+  180.clock DEC counter:BEQ zero:PLA:JMP return
+  190.zero TYA:PHA:TXA:PHA
+  200\left or right movement
+  210LDA#&80:LDX#1:JSR&FFF4:CPY#250:BCC left:LDA joystick:ORA#1:STA joystick:JMP next:.left CPY#5:BCS next:LDA joystick:ORA#2:STA joystick
+  220\up or down movement
+  230.next LDA#&80:LDX#2:JSR&FFF4:CPY#250:BCC down:LDA joystick:ORA#4:STA joystick:JMP button:.down CPY#5:BCS button:LDA joystick:ORA#8:STA joystick
+  240.button LDA&FC72:AND#&30:EOR#&30:BEQ reset:LDA joystick:ORA#16:STA joystick
+  250.reset LDA#20:STA counter:PLA:TAX:PLA:TAY:PLA:JMP return
+  260]:NEXT
+  270OSCLI"SAVE Joystick 900 "+STR$~P%+" "+STR$~start

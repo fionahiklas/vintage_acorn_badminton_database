@@ -1,0 +1,27 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** disc file routines ****
+ 4030.opendisc LDX#mount MOD 256:LDY#mount DIV 256:JSR oscli:LDA#1:STA work1
+ 4040LDX#cname MOD 256:LDY#cname DIV 256:LDA#&C0:JSR osfind:CMP#0:BEQ discerror:STA category:INC work1
+ 4050LDX#iname MOD 256:LDY#iname DIV 256:LDA#&C0:JSR osfind:CMP#0:BEQ discerror:STA index:INC work1
+ 4060LDX#dname MOD 256:LDY#dname DIV 256:LDA#&C0:JSR osfind:CMP#0:BEQ discerror:STA data:INC work1
+ 4070LDX#fname MOD 256:LDY#fname DIV 256:LDA#&C0:JSR osfind:CMP#0:BEQ discerror:STA free:INC work1
+ 4080LDA#0:STA ccat:STA ccat+1:STA catadds:STA catadds+1:STA file:STA offset:RTS
+ 4090.discerror LDA#0:LDY#0:JSR osfind:JSR plot:LDA#&D8:STA addr:LDA#&64:STA addr+1:LDA#160:STA byte:LDA#5:STA line:JSR remove:JSR print:EQUB4:EQUB31:EQUB11:EQUB10:EQUS"\246\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\250":EQUB31:EQUB11:EQUB11:EQUS"\251DISC ERROR, FILE  \251"
+ 4100EQUB31:EQUB11:EQUB12:EQUS"\251":EQUB31:EQUB30:EQUB12:EQUS"\251":EQUB31:EQUB11:EQUB13:EQUS"\251Press a key.":EQUB31:EQUB30:EQUB13:EQUS"\251":EQUB31:EQUB11:EQUB14:EQUS"\252\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\253":EQUB255:LDX#29:LDY#11:JSR vdu31:CLC:LDA work1:ADC#48
+ 4110JSR oswrch:LDA#5:JSR oswrch:JSR osrdch:JSR replace:JSR undo:JSR plot:PLA:PLA:RTS
+ 4120.mount EQUS"Mount 0":EQUB13
+ 4130.cname EQUS":0.$.Category":EQUB13
+ 4140.iname EQUS":0.$.Index":EQUB13
+ 4150.dname EQUS":0.$.Data":EQUB13
+ 4160.fname EQUS":0.$.Free":EQUB13
+ 4170.setcat LDA#0:STA work3:STA work4:LDA ccat:STA work1:LDA ccat+1:STA work2:LDY category:LDA#1:LDX#work1:JSR osargs:JSR osbget:STA type:CLC:LDA work1:ADC#11:STA work1:LDA work2:ADC#0:STA work2:LDA type:AND#1:BNE ntsc:LDY category:LDA#1
+ 4180LDX#work1:JSR osargs:JSR osbget:STA ncat:LDA#0:STA file:RTS
+ 4190.ntsc LDA#0:STA ncat:LDY category:LDX#work1:LDA#1:JSR osargs:JSR osbget:STA work1:JSR osbget:STA work2:.setloop LDY category:LDX#work1:LDA#1:JSR osargs:JSR osbget:CMP#255:BEQ setend:STA work5:CLC:LDA ncat:ROL A:TAY:LDA work1
+ 4200STA catlist,Y:INY:LDA work2:STA catlist,Y:INC ncat:LDA work5:AND#1:BEQ add16:LDA#13:JMP ncst:.add16 LDA#16:.ncst CLC:ADC work1:STA work1:LDA work2:ADC#0:STA work2:JMP setloop:.setend RTS
+ 4210.catname LDA#4:JSR oswrch:JSR vdu31:LDY category:LDX#work1:LDA#1:JSR osargs:LDX#10:.cnlp JSR osbget:CMP#0:BNE ntspc:LDA#32:.ntspc JSR oswrch:DEX:BNE cnlp:LDA#5:JMP oswrch
+ 4220.pcname CLC:LDA ccat:ADC#1:STA work1:LDA ccat+1:ADC#0:STA work2:LDA#0:STA work3:STA work4:LDX#18:LDY#8:JMP catname
+ 4230.cattype LDA#4:JSR oswrch:JSR vdu31:LDX#work1:LDY category:LDA#1:JSR osargs:JSR osbget:AND#1:BEQ psub:JSR print:EQUS"Cat":EQUB5:EQUB255:RTS:.psub JSR print:EQUS"Sub":EQUB5:EQUB255:RTS
+ 4240.listcat LDA ncat:BNE ctok:RTS:.ctok JSR plot:LDA#12:STA work5:LDA#0:STA work3:STA work4:LDX#0:.cllp LDA catlist,X:STA work1:INX:LDA catlist,X:STA work2:TXA:PHA:LDX#27:LDY work5:JSR cattype:CLC:LDA work1:ADC#1:STA work1:LDA work2
+ 4250ADC#0:STA work2:LDX#15:LDY work5:JSR catname:INC work5:PLA:TAX:INX:TXA:CLC:ROR A:CMP ncat:BNE cllp:JMP plot
+ 4260]:ENDPROC

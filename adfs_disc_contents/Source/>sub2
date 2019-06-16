@@ -1,0 +1,24 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** Print player on court ****
+ 4030.show_player TYA:PHA:CLC:LDA ind1:ROL A:TAY:LDA players,Y:BEQ endshp:STA xvalue:INY:LDA players,Y:STA yvalue:JSR graphics:JSR vdu25:CLC:LDA ind1:ADC#49:JSR oswrch:.endshp PLA:TAY:RTS
+ 4040 
+ 4050\**** Show ALL players ****
+ 4060.show_players LDY#0:.show_loop STY ind1:JSR show_player:INY:CPY#5:BNE show_loop:RTS
+ 4070 
+ 4080\**** animate court routine ****
+ 4090.animate LDA current_frame:STA ind1:LDA#10:STA ind2:JSR multiply:CLC:LDA#players MOD 256:ADC ind3:STA work1:LDA#players DIV 256:ADC#0:STA work2:LDA#players MOD 256:STA work3:LDA#players DIV 256:STA work4:LDY#0
+ 4100.calcloop LDA#0:STA work15:JSR atd:INY:JSR atd:LDA work15:BNE player_ok:LDA#128:DEY:STA work5,Y:INY:.player_ok INY:CPY#10:BNE calcloop:LDX#3
+ 4110.move_loop TXA:PHA:JSR check_draw:LDY#0
+ 4120.add_loop LDA work5,Y:CMP#128:BEQ not_add:CLC:ADC(work3),Y:STA(work3),Y:JMP add_ok:.not_add INY:.add_ok INY:CPY#10:BNE add_loop:JSR check_draw:LDX#20:LDY#0:LDA#&81:JSR osbyte:PLA:TAX:DEX:BNE move_loop
+ 4130JSR check_draw:LDY#0:.new_loop LDA work5,Y:CMP#128:BEQ not_new:LDA(work1),Y:STA(work3),Y:JMP new_ok:.not_new INY:.new_ok:INY:CPY#10:BNE new_loop:JSR check_draw:JMP frame_no
+ 4140.check_draw LDY#0:.check_loop LDA work5,Y:CMP#128:BEQ no_check:CLC:TYA:ROR A:STA ind1:JSR show_player:.no_check INY:INY:CPY#10:BNE check_loop:RTS
+ 4150.atd SEC:LDA(work1),Y:SBC(work3),Y:STA ind1:LDA#0:SBC#0:STA ind2:LDA#4:STA ind3:JSR division:LDA ind4:STA work5,Y:ORA work15:ORA ind2:STA work15:RTS
+ 4160 
+ 4170\**** Binary to decimal **** 
+ 4180.numbers LDA work1:STA ind1:LDA work2:STA ind2:LDA#100:STA ind3:JSR division:LDA ind4:STA work1:LDA ind2:STA ind1:LDA#0:STA ind2:LDA#10:STA ind3:JSR division:LDA ind4:STA work2:LDA ind2:STA work3:RTS
+ 4190 
+ 4200\**** Line and frame numbers ****
+ 4210.frame_no LDA#0:STA work2:LDA current_frame:STA work1:JSR numbers:LDX#34:LDY#30:LDA#4:JSR oswrch:JSR vdu31:CLC:LDA work3:ADC#48:JSR oswrch:LDA#5:JMP oswrch
+ 4220.line_no LDA#0:STA work2:LDY current_line:INY:STY work1:JSR numbers:LDX#37:LDY#30:LDA#4:JSR oswrch:JSR vdu31:CLC:LDA work2:ADC#48:JSR oswrch:CLC:LDA work3:ADC#48:JSR oswrch:LDA#5:JMP oswrch 
+ 4230]:ENDPROC

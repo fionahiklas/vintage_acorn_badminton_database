@@ -1,0 +1,8 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020.load_setup LDA type:BNE lcatthere:JSR opendisc:JSR setcat:.lcatthere LDA status:AND#224:ORA#11:STA status:JSR print:EQUB4:EQUB31:EQUB33:EQUB29:EQUS"Loading":EQUB5:EQUB255:JSR filewin:LDA type:CMP#2:BEQ subcd:JMP listcat
+ 4030.subcd JMP loadwin
+ 4040.save_setup LDA status:AND#32:BNE okfp:RTS:.okfp JSR print:EQUB4:EQUB31:EQUB33:EQUB29:EQUS"Saving ":EQUB5:EQUB255:LDA status:AND#128:BNE fromdisc:LDA type:BNE scatthere:JSR opendisc:JSR setcat:.scatthere LDA status:AND#224:ORA#10
+ 4050STA status:JSR filewin:LDA type:CMP#2:BEQ smess:JMP listcat:.smess JMP savewin
+ 4060.fromdisc JMP savedata
+ 4070]:ENDPROC

@@ -1,0 +1,20 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** shift free space file ****
+ 4030.shiftspc LDA#1:LDX#work1:JSR osargs:LDX work12:DEX:TXA:JSR osbput:LDA work12:STA ind1:LDA#3:STA ind2:JSR multiply:LDA#6:STA work1:LDA#3:STA work13:LDA#0:STA work14:STA work15:STA work16:.ssloop LDX#work1:LDA#1:JSR osargs:LDX#0
+ 4040.sinl JSR osbget:STA work17,X:INX:CPX#3:BNE sinl:LDX#work13:LDA#1:JSR osargs:LDX#0:.soutl LDA work17,X:JSR osbput:INX:CPX#3:BNE soutl:LDA work1:CMP ind3:BEQ ssend:CLC:LDA work1:ADC#3:STA work1:CLC:LDA work13:ADC#3:STA work13:JMP ssloop
+ 4050.ssend RTS
+ 4060 
+ 4070\**** shift index file ****
+ 4080.shiftind SEC:LDA work10:SBC#1:STA work13:LDA work11:SBC#0:STA work14:LDA work13:STA ind1:LDA#5:STA ind2:JSR multiply:LDA ind3:STA work1:LDA ind4:STA work2:LDA work14:STA ind1:LDA#5:STA ind2:JSR multiply:CLC:LDA work2:ADC ind3:STA work2
+ 4090.isloop LDX#work1:LDA#1:JSR osargs:LDX#0:.iil JSR osbget:STA work13,X:INX:CPX#5:BNE iil:LDX#0:.iol LDA work13,X:JSR osbput:INX:CPX#5:BNE iol:LDA work1:CMP work5:BNE ntla:LDA work2:CMP work6:BEQ siend:.ntla SEC:LDA work1:SBC#5:STA work1
+ 4100LDA work2:SBC#0:STA work2:JMP isloop:.siend RTS
+ 4110 
+ 4120\**** shift category file ****
+ 4130.shiftcat LDA#0:STA work1:STA work2:.scloop LDA work2:CMP ccat+1:BEQ equchk:.notequ LDX#work1:LDA#1:JSR osargs:JSR osbget:CMP#2:BEQ altoff:CMP#255:BEQ eofchk:CLC:LDA work1:ADC#13:STA work1:LDA work2:ADC#0:STA work2:JMP scloop
+ 4140.eofchk JSR osbget:BCS scend:CLC:LDA work1:ADC#1:STA work1:LDA work2:ADC#0:STA work2:JMP scloop:.equchk LDA work1:CMP ccat:BNE notequ:CLC:LDA work1:ADC#16:STA work1:LDA work2:ADC#0:STA work2:JMP scloop
+ 4150.scend RTS
+ 4160.altoff CLC:LDA work1:ADC#12:STA work1:LDA work2:ADC#0:STA work2:LDX#work1:LDA#1:JSR osargs
+ 4170.incoff JSR osbget:STA work13:JSR osbget:STA work14:SEC:LDA work13:SBC work5:LDA work14:SBC work6:BCC before:.addoff JSR osbget:STA work15:JSR osbget:STA work16
+ 4180LDX#work1:LDA#1:JSR osargs:CLC:LDA work13:ADC#5:PHP:JSR osbput:PLP:LDA work14:ADC#0:JSR osbput:CLC:LDA work15:ADC#5:PHP:JSR osbput:PLP:LDA work16:ADC#0:JSR osbput:.before CLC:LDA work1:ADC#4:STA work1:LDA work2:ADC#0:STA work2:JMP scloop
+ 4190]:ENDPROC

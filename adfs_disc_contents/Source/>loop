@@ -1,0 +1,22 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\*****************
+ 4030\*Main procedures* 
+ 4040\***************** 
+ 4050 
+ 4060.start LDX#0:LDY#0:.wipe LDA#0:STA &50,Y:INY:CPY#&4F:BNE wipe:LDA#31:STA ycoord:LDA#18:JSR oswrch:LDA#3:JSR oswrch:LDA#1:JSR oswrch:LDA#225:LDX#127:LDY#0:JSR osbyte:JSR plot:JSR print:EQUB 4:EQUB 31:EQUB 33:EQUB 29:EQUS"Waiting"
+ 4070EQUB 5:EQUB 7:EQUB 255:LDY#1:STY current_frame:INY:STY max_frame:JSR frame_no:JSR line_no
+ 4080 
+ 4090\**** Main loop starts here ****
+ 4100.mainloop
+ 4110LDA joystick:AND#15:BNE clear:JMP button:.clear JSR plot:LDA joystick
+ 4120.left CLC:ROR A:BCC right:LDX xcoord:BEQ right:DEX:STX xcoord:.right CLC:ROR A:BCC up:LDX xcoord:CPX#39:BEQ up:INX:STX xcoord:.up CLC:ROR A:BCC down:LDX ycoord:BEQ down:DEX:STX ycoord:.down CLC:ROR A:BCC no_more:LDX ycoord:CPX#31
+ 4130BEQ no_more:INX:STX ycoord
+ 4140.no_more LDA joystick:AND#16:STA joystick:JSR plot
+ 4150.button
+ 4160LDA joystick:AND#16:BEQ keyboard:AND#15:STA joystick:LDA status:AND#8:BEQ not_file:JSR file_select:JMP keyboard:.not_file LDA status:AND#16:BEQ not_print:JSR print_select:JMP keyboard:.not_print LDA ycoord:CMP#29:BCC keyboard:CMP#31
+ 4170BCS keyboard:JSR icon_decode
+ 4180.keyboard LDX#0:LDY#0:LDA#&81:JSR osbyte:BCC where:CPY#27:BNE nowhere:LDA#&7C:JSR osbyte:JMP mainloop:.where CPX#128:BCS nowhere:LDA status:AND#7:CMP#1:BNE nowhere:STX character:LDA ycoord:CMP#20:BCS notincourt
+ 4190JSR court_edit:JMP mainloop:.notincourt CMP#21:BCC nowhere:CMP#28:BCS nowhere:JSR text_edit:.nowhere JMP mainloop
+ 4200\**** Main loop ends here ****
+ 4210]:ENDPROC

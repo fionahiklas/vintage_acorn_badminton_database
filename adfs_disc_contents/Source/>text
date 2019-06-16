@@ -1,0 +1,15 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** Editing for text area ****
+ 4030.text_edit JSR plot:LDA character:CMP#13:BNE not_cr:LDA#1:STA xcoord:LDY ycoord:INY:CPY#28:BCC not_last:LDY current_line:CPY#13:BEQ fin_edit:INY:STY current_line:JSR text_up:LDY#27:.not_last STY ycoord:JMP fin_edit
+ 4040.not_cr CMP#127:BNE not_del:LDA xcoord:CMP#2:BCC fin_edit:DEC xcoord:JSR text_addr:LDA#0:LDY#0:STA(ind1),Y:LDA#4:JSR oswrch:LDX xcoord:LDY ycoord:JSR vdu31:LDA#32:JSR oswrch:JMP fin_edit
+ 4050.not_del CMP#32:BCC fin_edit:LDA xcoord:CMP#1:BCC fin_edit:CMP#39:BCC not_format:SEC:LDA ycoord:SBC#21:CLC:ADC current_line:CMP#19:BEQ fin_edit:JSR format:.not_format LDA#4:JSR oswrch:LDX xcoord:LDY ycoord:JSR vdu31:LDA character
+ 4060JSR oswrch:JSR text_addr:LDA character:LDY#0:STA(ind1),Y:INC xcoord:JSR status_check:.fin_edit LDA#5:JSR oswrch:JMP plot
+ 4070\**** text format routine ****
+ 4080.format LDA#0:STA ind5:LDA character:CMP#32:BEQ no_word:JSR text_addr:LDX#0:LDY#0:.form_loop SEC:LDA ind1:SBC#1:STA ind1:LDA ind2:SBC#0:STA ind2:LDA(ind1),Y:CMP#33:BCC word_found:INX:CPX#38:BNE form_loop:LDX#0
+ 4090.word_found STX ind5:CPX#0:BEQ no_word:LDA#4:JSR oswrch:LDX xcoord:LDY ycoord:JSR vdu31:LDY ind5:LDA#127:.word_wipe JSR oswrch:DEY:BNE word_wipe:CLC:LDA ind1:ADC#1:STA ind1:LDA ind2:ADC#0:STA ind2:CLC:LDA ind1:ADC ind5
+ 4100STA ind3:LDA ind2:ADC#0:STA ind4:LDY#0:.word_move LDA(ind1),Y:STA(ind3),Y:LDA#0:STA(ind1),Y:INY:CPY ind5:BNE word_move
+ 4110.no_word CLC:LDA ind5:ADC#1:STA xcoord:LDA ycoord:CMP#27:BNE not_bottom:INC current_line:JMP text_up
+ 4120.not_bottom INC ycoord:LDA ycoord:SEC:SBC#21:CLC:ADC current_line:LDY ycoord:JMP text_line
+ 4130.status_check PHA:LDA status:AND#32:BEQ nfp:LDA status:AND#128:BEQ fcc:LDA status:ORA#64:STA status:JMP fcc:.nfp LDA status:ORA#32:STA status:.fcc PLA:RTS
+ 4140]:ENDPROC

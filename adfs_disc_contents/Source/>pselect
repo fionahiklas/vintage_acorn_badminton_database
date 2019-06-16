@@ -1,0 +1,10 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** Printer information ****
+ 4030.print_select LDA ycoord:CMP#11:BCC nipsw:CMP#13:BCS p1:LDA xcoord:CMP#25:BCC nipsw:CMP#28:BCS nipsw:INC work4:JMP copies
+ 4040.p1 CMP#14:BCC nipsw:CMP#16:BCS p2:LDA xcoord:CMP#25:BCC nipsw:CMP#28:BCS nipsw:DEC work4:JMP copies
+ 4050.p2 CMP#17:BNE p3:LDA xcoord:CMP#16:BCC nipsw:CMP#20:BCS s:JSR phs:LDA#1:STA work5:JMP phs:.s CMP#25:BCC nipsw:CMP#34:BCS nipsw:JSR phs:LDA#2:STA work5:JMP phs
+ 4060.nipsw RTS
+ 4070.p3 CMP#19:BCC nipsw:CMP#22:BCS nipsw:LDA xcoord:CMP#16:BCC nipsw:CMP#21:BCS c:JSR plot:JSR replace:JMP pdump:.c CMP#22:BCC nipsw:CMP#31:BCS nipsw:LDA status:AND#224:STA status:JSR plot:JSR replace:JSR print:EQUB4:EQUB31:EQUB33:EQUB29
+ 4080EQUS"Waiting":EQUB5:EQUB 255:JMP plot
+ 4090]:ENDPROC

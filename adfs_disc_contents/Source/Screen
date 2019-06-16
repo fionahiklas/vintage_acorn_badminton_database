@@ -1,0 +1,15 @@
+   10REM Machine code display program.
+   20REM For badminton database.
+   30REM By Fiona Bianchi.
+   40REM For AS Computing project.
+   50REM 24/1/91
+   60HIMEM=&5700:oswrch=&FFEE:osfind=&FFCE:osbget=&FFD7:osbyte=&FFF4
+   70FORI%=0TO2STEP2:P%=&5700
+   80[OPTI%
+   90.f1 EQUS"FileText":EQUB 13
+  100.f2 EQUS"FileGraph":EQUB 13
+  110.start PHA:TYA:PHA:TXA:PHA:LDA#20:LDX#1:JSR osbyte:LDX#f1 MOD 256:LDY#f1 DIV 256:LDA#&40:JSR osfind:BNE okay1:BRK:BRK:EQUS"Display error. Can't find 'FileText'":BRK:.okay1 TAY:JSR print:LDA#0:JSR osfind
+  120LDX#f2 MOD 256:LDY#f2 DIV 256:LDA#&40:JSR osfind:BNE okay2:BRK:BRK:EQUS"Display error. Can't find 'FileGraph'":BRK:.okay2 TAY:JSR print:LDA#0:JSR osfind:PLA:TAX:PLA:TAY:PLA:RTS
+  130.print JSR osbget:BCS finish:JSR oswrch:JMP print:.finish RTS
+  140]:NEXT
+  150OSCLI"SAVE Display 5700 "+STR$~P%+" "+STR$~start 

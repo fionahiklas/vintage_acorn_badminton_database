@@ -1,0 +1,17 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** court print dump ****
+ 4030.apc PHA:LDA#1:JSR oswrch:PLA:JMP oswrch
+ 4040.setline LDA#2:JSR oswrch:LDA#27:JSR apc:LDA#42:JSR apc:LDA#5:JSR apc:LDA#64:JSR apc:LDA#1:JSR apc:RTS
+ 4050.page LDA#2:JSR oswrch:LDA#27:JSR apc:LDA#65:JSR apc:LDA#8:JSR apc:RTS
+ 4060.courtd JSR page:LDA#0:STA work8:STA work11:STA work10:LDA#&58:STA work12:.lineloop JSR setline:LDA#0:STA work9:.charloop LDY#0:STY work10:.tranloop LDA(work11),Y:STA work13,Y:INY:CPY#8:BNE tranloop:LDY#8:.byteloop LDX#0
+ 4070.shiftloop CLC:ROL work13,X:ROL work10:INX:CPX#8:BNE shiftloop:LDA work10:JSR apc:LDA#0:STA work10:DEY:BNE byteloop:CLC:LDA work11:ADC#8:STA work11:LDA work12:ADC#0:STA work12:LDY work9:INY:STY work9:CPY#40:BNE charloop:LDA#13:JSR apc
+ 4080LDY work8:INY:STY work8:CPY#21:BNE lineloop:LDA#13:JSR oswrch:LDA#3:JMP oswrch
+ 4090 
+ 4100\**** text print dump ****
+ 4110.textd LDA#2:JSR oswrch:LDA#text_data MOD 256:STA work10:LDA#text_data DIV 256:STA work11:LDA#dump MOD 256:STA work12:LDA#dump DIV 256:STA work13:LDA#80:STA work8:.wloop LDA#0:STA work9:LDY#0:.fwl LDA(work10),Y:CMP#33:BCS sotf:CMP#255
+ 4120BNE nwp:JMP tdend:.nwp INY:CPY#255:BNE fwl:JMP tdend:.sotf CLC:TYA:ADC work10:STA work10:LDA work11:ADC#0:STA work11:LDY#0:.mpwl LDA(work10),Y:BNE nz:LDA#32:.nz STA(work12),Y:INY:CMP#32:BNE nspc:STY work9:JMP pwf:.nspc CMP#46:BNE ndot
+ 4130STY work9:LDA#13:STA(work12),Y:INY:JMP pwf:.ndot CMP#255:BNE ntte:DEY:STY work9:JMP pwf:.ntte CPY#80:BNE mpwl:STY work9:.pwf LDA#0:STA(work12),Y:LDA work8:CMP work9:BCS nocr:LDA#13:JSR apc:LDA#80:STA work8:.nocr LDY#0
+ 4140.dtlp LDA(work12),Y:BEQ dple:JSR apc:INY:DEC work8:CMP#13:BNE dtlp:LDA#80:STA work8:JMP dtlp:.dple LDY work9:LDA(work10),Y:CMP#255:BEQ tdend:CLC:LDA work10:ADC work9:STA work10:LDA work11:ADC#0:STA work11:JMP wloop:.tdend LDA#13
+ 4150JSR oswrch:LDA#3:JMP oswrch 
+ 4160]:ENDPROC 

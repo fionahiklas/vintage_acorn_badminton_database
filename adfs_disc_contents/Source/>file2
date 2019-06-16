@@ -1,0 +1,29 @@
+  160DEFPROCassemble
+ 4010[OPTI%
+ 4020\**** load file data routine ****
+ 4030.loaddata LDA file:BNE okfile:LDA#7:JSR oswrch:JMP undo:.okfile JSR replace:JSR show_players:JSR cleartext:CLC:LDA ccat:ADC#12:STA work1:LDA ccat+1:ADC#0:STA work2:LDA#0:STA work3:STA work4:LDX#work1:LDY category:LDA#1:JSR osargs
+ 4040JSR osbget:STA work1:JSR osbget:STA work2:LDX file:DEX:STX ind1:LDA#5:STA ind2:JSR multiply:CLC:LDA work1:ADC ind3:STA work1:LDA work2:ADC#0:STA work2:LDX#work1:LDY index:LDA#1:JSR osargs:LDX#0
+ 4050.locloop JSR osbget:STA location,X:STA present,X:INX:CPX#3:BNE locloop:LDA data:STA fileblock:LDA#861 MOD 256:STA numbytes:LDA#861 DIV 256:STA numbytes+1:LDA#text_data MOD 256:STA memaddr:LDA#text_data DIV 256:STA memaddr+1
+ 4060LDA#3:LDX#fileblock MOD 256:LDY#fileblock DIV 256:JSR osgbpb:BCC lokay:JSR resetmem:LDA#49:STA work1:JMP discprob
+ 4070.lokay JSR undo:JSR plot:LDA#10:STA ind5:LDA#0:STA ind6:JSR transfer:LDA#1:STA current_frame:JSR frame_no:JSR show_players:LDA#0:STA current_line:JSR line_no
+ 4080LDA#0:LDY#21:.ltdl STA work1:STY work2:JSR text_line:LDY work2:INY:LDX work1:INX:TXA:CPX#7:BNE ltdl:LDA status:AND#31:ORA#160:STA status:JMP plot
+ 4090.cleartext JSR print:EQUB4:EQUB28:EQUB1:EQUB27:EQUB38:EQUB21:EQUB12:EQUB26:EQUB5:EQUB255:RTS
+ 4100 
+ 4110\**** save file data routine ****
+ 4120.savedata LDA status:AND#32:BNE sfp:LDA#7:JSR oswrch:JMP undo:.sfp LDA status:AND#128:BEQ fnfd:LDA status:AND#64:BEQ sokay:JMP tsdd:.fnfd JSR reorg
+ 4130.tsdd LDX#0:.slloop LDA present,X:STA location,X:INX:CPX#3:BNE slloop:LDA data:STA fileblock:LDA#861 MOD 256:STA numbytes:LDA#861 DIV 256:STA numbytes+1:LDA#text_data MOD 256:STA memaddr:LDA#text_data DIV 256:STA memaddr+1:LDA#1
+ 4140LDX#fileblock MOD 256:LDY#fileblock DIV 256:JSR osgbpb:BCC sokay:LDA#50:STA work1:JMP discprob
+ 4150.sokay LDY#0:LDA#255:JSR osargs:JSR undo:LDA status:AND#31:STA status:JSR plot:JSR cleartext:JSR show_players:JSR resetmem:JMP plot
+ 4160.resetmem LDA#text_data MOD 256:STA work1:LDA#text_data DIV 256:STA work2:LDA#0:STA work3:STA work4:LDY#0:.wmlp LDA#0:STA(work1),Y:CLC:LDA work3:ADC#1:STA work3:LDA work4:ADC#0:STA work4:CMP#861 DIV 256
+ 4170BCC ntem:LDA work3:CMP#861 MOD 256:BEQ mend:.ntem CLC:LDA work1:ADC#1:STA work1:LDA work2:ADC#0:STA work2:JMP wmlp:.mend LDA#255:STA text_end:LDA#0:STA current_line:JSR line_no:LDA#1:STA current_frame:LDA#2:STA max_frame:JMP frame_no
+ 4180 
+ 4190\**** disc problem routine ****
+ 4200.discprob JSR undo:LDA#0:LDY#0:JSR osfind:JSR plot:LDA#&D8:STA addr:LDA#&64:STA addr+1:LDA#136:STA byte:LDA#6:STA line:JSR remove:JSR print:EQUB4:EQUB31:EQUB11:EQUB10:EQUS"\246\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\250":EQUB31:EQUB11:EQUB11:EQUS"\251DISC READ/WRITE\251"
+ 4210EQUB31:EQUB11:EQUB12:EQUS"\251PROBLEM:":EQUB31:EQUB27:EQUB12:EQUS"\251":EQUB31:EQUB11:EQUB13:EQUS"\251":EQUB31:EQUB27:EQUB13:EQUS"\251":EQUB31:EQUB11:EQUB14:EQUS"\251Press a key.   \251":EQUB31:EQUB11:EQUB15:EQUS"\252\247\247\247\247\247\247\247\247\247\247\247\247\247\247\247\253":EQUB255
+ 4220LDX#21:LDY#12:JSR vdu31:LDA work1:JSR oswrch:LDA#5:JSR oswrch:JSR osrdch:JSR replace:JMP plot
+ 4230\**** control block for data ****
+ 4240.fileblock EQUB 0
+ 4250.memaddr EQUD 0
+ 4260.numbytes EQUD 0
+ 4270.location EQUD 0
+ 4280]:ENDPROC
